@@ -1,0 +1,37 @@
+buildscript {
+  repositories {
+    jcenter()
+    google()
+  }
+
+  dependencies {
+    classpath "com.android.tools.build:gradle:3.4.0"
+  }
+}
+
+apply plugin: "com.android.library"
+
+android {
+  compileSdkVersion 28
+  buildToolsVersion "28.0.3"
+
+  defaultConfig {
+    minSdkVersion 16
+    targetSdkVersion 28
+    versionCode 1
+    versionName "1.0"
+  }
+  lintOptions {
+    abortOnError false
+  }
+}
+
+repositories {
+  mavenCentral()
+  google()
+}
+
+dependencies {
+  implementation "com.facebook.react:react-native:+"
+  implementation "com.github.bumptech.glide:glide:3.8.0"
+}
