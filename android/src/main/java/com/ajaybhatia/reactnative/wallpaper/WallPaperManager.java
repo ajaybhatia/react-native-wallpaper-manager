@@ -74,6 +74,7 @@ public class WallPaperManager extends ReactContextBaseJavaModule {
     public void setWallpaper(final ReadableMap params, Callback callback){
 
         final String source = params.hasKey("uri") ? params.getString("uri") : null;
+        final String screen = params.hasKey("screen") ? params.getString("screen") : null;
         ReadableMap headers = params.hasKey("headers") ? params.getMap("headers") : null;
 
         if(rctCallback!=null){
@@ -89,7 +90,7 @@ public class WallPaperManager extends ReactContextBaseJavaModule {
         rctCallback = callback;
         rctParams = params;
 
-        final SimpleTarget<byte[]> simpleTarget = this.getSimpleTarget(source);
+        final SimpleTarget<byte[]> simpleTarget = this.getSimpleTarget(source,screen);
         mCurrentActivity = getCurrentActivity();
         if(mCurrentActivity==null){
             sendMessage("error","CurrentActivity is null",source);
@@ -142,7 +143,13 @@ public class WallPaperManager extends ReactContextBaseJavaModule {
                 Bitmap mBitmap = BitmapFactory.decodeResource(this.getReactApplicationContext().getResources(), resId);
                 try
                 {
-                    wallpaperManager.setBitmap(mBitmap);
+                    if(screen.equals("lock")){
+                        wallpaperManager.setBitmap(mBitmap, null, true, WallpaperManager.FLAG_LOCK);
+                    } else if(screen.equals("home")){
+                        wallpaperManager.setBitmap(mBitmap, null, true, WallpaperManager.FLAG_SYSTEM);
+                    } else if(screen.equals("both")){
+                        wallpaperManager.setBitmap(mBitmap, null, true, WallpaperManager.FLAG_LOCK | WallpaperManager.FLAG_SYSTEM);
+                    }
                     sendMessage("success","Set Wallpaper Success",source);
                 }
                 catch (Exception e)
@@ -218,14 +225,20 @@ public class WallPaperManager extends ReactContextBaseJavaModule {
         }
     }
 
-    private SimpleTarget<byte[]> getSimpleTarget(final String source){
+    private SimpleTarget<byte[]> getSimpleTarget(final String source, final String screen){
         return new SimpleTarget<byte[]>(1080, 1920){
             @Override
             public void onResourceReady(byte[] resource, GlideAnimation<? super byte[]> glideAnimation) {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(resource, 0, resource.length);
                 try
                 {
-                    wallpaperManager.setBitmap(bitmap);
+                    if(screen.equals("lock")){
+                        wallpaperManager.setBitmap(bitmap, null, true, WallpaperManager.FLAG_LOCK);
+                    } else if(screen.equals("home")){
+                        wallpaperManager.setBitmap(bitmap, null, true, WallpaperManager.FLAG_SYSTEM);
+                    } else if(screen.equals("both")){
+                        wallpaperManager.setBitmap(bitmap, null, true, WallpaperManager.FLAG_LOCK | WallpaperManager.FLAG_SYSTEM);
+                    }
                     sendMessage("success","Set Wallpaper Success",source);
                 }
                 catch (Exception e)
